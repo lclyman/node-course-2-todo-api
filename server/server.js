@@ -23,6 +23,22 @@ app.post('/todos', (req, res) => {
 
 });
 
+app.post('/users', (req, res) => {
+  var user = new User({
+  name: req.body.name,
+  age: req.body.age,
+  email: req.body.email,
+  isMember: req.body.isMember
+  });
+
+  user.save().then((doc) => {
+    res.send(doc);
+  }, (err) => {
+    res.status(400).send(err);
+  });
+
+});
+
 app.listen(3000, () => {
   console.log('Server is running on port 3000');
 });
