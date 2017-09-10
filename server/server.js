@@ -27,19 +27,14 @@ app.post('/todos', (req, res) => {
 });
 
 app.post('/users', (req, res) => {
-  let user = new User({
-  name: req.body.name,
-  age: req.body.age,
-  email: req.body.email,
-  isMember: req.body.isMember
-  });
+  let body = _.pick(req.body, ['name', 'age', 'email','password']);
+  let user = new User(body);
 
-  user.save().then((doc) => {
-    res.send(doc);
-  }, (err) => {
+  user.save().then((user) => {
+    res.send(user);
+  }).catch((err) => {
     res.status(400).send(err);
   });
-
 });
 
 // list all the todos
@@ -142,7 +137,7 @@ app.delete('/users/:id', (req, res) => {
 
 });
 
-// choose which params can be updated by the user
+// update todo and choose which params can be updated by the user
 
 app.patch('/todos/:id', (req, res) => {
   var id = req.params.id;
@@ -151,7 +146,8 @@ app.patch('/todos/:id', (req, res) => {
   if (!ObjectID.isValid(id)) {
     return res.status(404).send('Not a valid ID');
   }
-
+  
+// make updates based on whether todo is completed
   if(_.isBoolean(body.completed) && body.completed) {
     body.completedAt = new Date().getTime();
   } else {
