@@ -48,7 +48,7 @@ UserSchema.methods.toJSON = function() {
   var user = this;
   var userObject = user.toObject();
 
-  return _.pick(userObject, ['_id', 'name', 'age', 'email']);
+  return _.pick(userObject, ['_id', 'name', 'age', 'email', 'dateAdded']);
 }
 
 // must use es5 function syntax for 'this' use
@@ -67,17 +67,3 @@ UserSchema.methods.generateAuthToken = function() {
 var User = mongoose.model('Users', UserSchema );
 
 module.exports = {User};
-
-
-// newUser = new User({
-//   name: 'Jonathan Clyman',
-//   age: 59,
-//   email: "jcclyman@gmail.com   ",
-//   isMember: true
-// });
-
-// newUser.save().then((doc) => {
-//   console.log(`Saved new user: ${doc}`);
-// }, (err) => {
-//   console.log('Unable to save user', err);
-// });
