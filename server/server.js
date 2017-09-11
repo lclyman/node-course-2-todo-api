@@ -30,8 +30,10 @@ app.post('/users', (req, res) => {
   let body = _.pick(req.body, ['name', 'age', 'email','password']);
   let user = new User(body);
 
-  user.save().then((user) => {
-    res.send(user);
+  user.save().then(() => {
+    return user.generateAuthToken();
+  }).then((token) => {
+    res.header('x-auth', token).send(user);
   }).catch((err) => {
     res.status(400).send(err);
   });
@@ -61,7 +63,7 @@ app.get('/todos/:id', (req, res) => {
 
     res.send({todo});
 
-  }).catch((err) => { 
+  }).catch((err) => {
     res.status(400).send('There was a problem with the request. Please try again');
   });
 
@@ -91,7 +93,7 @@ app.get('/users/:id', (req, res) => {
 
     res.send({user});
 
-  }).catch((err) => { 
+  }).catch((err) => {
     res.status(400).send('There was a problem with the request. Please try again');
   });
 
@@ -111,7 +113,7 @@ app.delete('/todos/:id', (req, res) => {
 
     res.send({todo});
 
-  }).catch((err) => { 
+  }).catch((err) => {
     res.status(400).send('There was a problem with the request. Please try again');
   });
 
@@ -131,7 +133,7 @@ app.delete('/users/:id', (req, res) => {
 
     res.send({user});
 
-  }).catch((err) => { 
+  }).catch((err) => {
     res.status(400).send('There was a problem with the request. Please try again');
   });
 
@@ -146,7 +148,7 @@ app.patch('/todos/:id', (req, res) => {
   if (!ObjectID.isValid(id)) {
     return res.status(404).send('Not a valid ID');
   }
-  
+
 // make updates based on whether todo is completed
   if(_.isBoolean(body.completed) && body.completed) {
     body.completedAt = new Date().getTime();
